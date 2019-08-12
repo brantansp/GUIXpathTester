@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import javax.swing.JTextArea;
+import java.awt.Color;
+import javax.swing.JLabel;
 
 public class GUIWindow {
 
 	private JFrame frame;
 	private JTextField txtEnterTheUrl;
+	private JTextField xpathTextField;
 
 	/**
 	 * Launch the application.
@@ -121,10 +124,21 @@ public class GUIWindow {
 		panel.add(comboBox);
 		
 		JTextArea textArea = new JTextArea();
+		textArea.setForeground(Color.GREEN);
+		textArea.setBackground(Color.BLACK);
 		textArea.setEditable(false);
 		textArea.setBounds(10, 230, 489, 231);
 		panel.add(textArea);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
+		
+		xpathTextField = new JTextField();
+		xpathTextField.setBounds(67, 151, 331, 20);
+		panel.add(xpathTextField);
+		xpathTextField.setColumns(10);
+		
+		JLabel lblXpath = new JLabel("XPath :");
+		lblXpath.setBounds(10, 154, 46, 14);
+		panel.add(lblXpath);
 		System.setOut(printStream);
 		System.setErr(printStream);
 		
