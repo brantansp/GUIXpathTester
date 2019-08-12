@@ -10,6 +10,5 @@
 	<classpathentry kind="lib" path="lib/guava-25.0-jre.jar"/>
 	<classpathentry kind="lib" path="lib/okhttp-3.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/okio-1.14.0.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/eclipse/plugins/org.eclipse.jface_3.12.2.v20170113-2113.jar" sourcepath="C:/Program Files/eclipse/plugins/org.eclipse.jface_3.12.2.v20170113-2113.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
