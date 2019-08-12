@@ -24,12 +24,15 @@ import java.io.PrintStream;
 import javax.swing.JTextArea;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 
 public class GUIWindow {
 
 	private JFrame frame;
 	private JTextField txtEnterTheUrl;
 	private JTextField xpathTextField;
+	private JTextField textField;
+	private JTextField textField_1;
 
 	/**
 	 * Launch the application.
@@ -78,7 +81,7 @@ public class GUIWindow {
 		tabbedPane.setBounds(10, 0, 514, 500);
 		frame.getContentPane().add(tabbedPane);
 		
-		tabbedPane.addTab("New tab", null, panel, null);
+		tabbedPane.addTab("Action", null, panel, null);
 		panel.setLayout(null);
 		
 		radioButton.setSelected(true);
@@ -123,12 +126,15 @@ public class GUIWindow {
 		comboBox.setBounds(10, 99, 56, 20);
 		panel.add(comboBox);
 		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 230, 489, 231);
+		panel.add(scrollPane);
+		
 		JTextArea textArea = new JTextArea();
+		scrollPane.setViewportView(textArea);
 		textArea.setForeground(Color.GREEN);
 		textArea.setBackground(Color.BLACK);
 		textArea.setEditable(false);
-		textArea.setBounds(10, 230, 489, 231);
-		panel.add(textArea);
 		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
 		
 		xpathTextField = new JTextField();
@@ -139,11 +145,56 @@ public class GUIWindow {
 		JLabel lblXpath = new JLabel("XPath :");
 		lblXpath.setBounds(10, 154, 46, 14);
 		panel.add(lblXpath);
+		
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {" click()", " sendKeys()", " clear()", " getText()"}));
+		comboBox_1.setBounds(399, 151, 101, 20);
+		panel.add(comboBox_1);
+		
+		JButton btnExecute = new JButton("EXECUTE");
+		btnExecute.setBounds(208, 182, 89, 23);
+		panel.add(btnExecute);
+		
+		JButton btnNewButton_1 = new JButton("");
+		btnNewButton_1.setToolTipText("Clear Console");
+		btnNewButton_1.setBounds(484, 215, 15, 15);
+		panel.add(btnNewButton_1);
+		
+		JButton btnCopyConsoleText = new JButton("");
+		btnCopyConsoleText.setToolTipText("Copy console text");
+		btnCopyConsoleText.setBounds(470, 215, 15, 15);
+		panel.add(btnCopyConsoleText);
 		System.setOut(printStream);
 		System.setErr(printStream);
 		
-		tabbedPane.addTab("New tab", null, panel_1, null);
+		tabbedPane.addTab("Configuration", null, panel_1, null);
 		panel_1.setLayout(null);
+		
+		JLabel lblChromeDriverExecutable = new JLabel("Chrome Driver executable path : ");
+		lblChromeDriverExecutable.setBounds(10, 42, 195, 14);
+		panel_1.add(lblChromeDriverExecutable);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 67, 489, 20);
+		panel_1.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblFirefoxDriverExecutable = new JLabel("Firefox Driver executable path : ");
+		lblFirefoxDriverExecutable.setBounds(10, 109, 195, 14);
+		panel_1.add(lblFirefoxDriverExecutable);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(10, 134, 489, 20);
+		panel_1.add(textField_1);
+		textField_1.setColumns(10);
+		
+		JButton btnSaveConfiguration = new JButton("Save Configuration");
+		btnSaveConfiguration.setBounds(104, 190, 130, 23);
+		panel_1.add(btnSaveConfiguration);
+		
+		JButton btnNewButton = new JButton("Reset Default");
+		btnNewButton.setBounds(276, 190, 130, 23);
+		panel_1.add(btnNewButton);
 		
 		button_2.addMouseListener(new MouseAdapter() {
 			@Override
