@@ -18,21 +18,29 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.Choice;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 import javax.swing.JTextArea;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.ButtonGroup;
 
 public class GUIWindow {
 
 	private JFrame frame;
 	private JTextField txtEnterTheUrl;
 	private JTextField xpathTextField;
-	private JTextField textField;
+	private JTextField txtdriverchromedriverexe;
 	private JTextField textField_1;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	/**
 	 * Launch the application.
@@ -43,6 +51,20 @@ public class GUIWindow {
 				try {
 					GUIWindow window = new GUIWindow();
 					window.frame.setVisible(true);
+					File tmpDir = new File(System.getProperty("user.dir")+"\\configuration.ini");
+					boolean exists = tmpDir.exists();
+					if (!exists) {
+						Writer writer = null;
+						try {
+						    writer = new BufferedWriter(new OutputStreamWriter(
+						          new FileOutputStream(System.getProperty("user.dir")+"\\configuration.ini"), "utf-8"));
+						    writer.write("chromedriver=C:\\Users\\pl58641\\EclipseNeonSE\\driver\\chromedriver.exe");
+						} catch (IOException ex) {
+
+						} finally {
+						   try {writer.close();} catch (Exception ex) {/*ignore*/}
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -71,7 +93,9 @@ public class GUIWindow {
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		JPanel panel = new JPanel();
 		JRadioButton radioButton = new JRadioButton("Chrome");
+		buttonGroup.add(radioButton);
 		JRadioButton radioButton_1 = new JRadioButton("Firefox");
+		buttonGroup.add(radioButton_1);
 		JButton button_1 = new JButton("Close Browser");
 		JPanel panel_1 = new JPanel();
 		JButton button_2 = new JButton("Navigate");
@@ -174,10 +198,11 @@ public class GUIWindow {
 		lblChromeDriverExecutable.setBounds(10, 42, 195, 14);
 		panel_1.add(lblChromeDriverExecutable);
 		
-		textField = new JTextField();
-		textField.setBounds(10, 67, 489, 20);
-		panel_1.add(textField);
-		textField.setColumns(10);
+		txtdriverchromedriverexe = new JTextField();
+		txtdriverchromedriverexe.setText(System.getProperty("user.dir")+"\\driver\\chromedriver.exe");
+		txtdriverchromedriverexe.setBounds(10, 67, 489, 20);
+		panel_1.add(txtdriverchromedriverexe);
+		txtdriverchromedriverexe.setColumns(10);
 		
 		JLabel lblFirefoxDriverExecutable = new JLabel("Firefox Driver executable path : ");
 		lblFirefoxDriverExecutable.setBounds(10, 109, 195, 14);
@@ -189,11 +214,17 @@ public class GUIWindow {
 		textField_1.setColumns(10);
 		
 		JButton btnSaveConfiguration = new JButton("Save Configuration");
-		btnSaveConfiguration.setBounds(104, 190, 130, 23);
+		btnSaveConfiguration.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println(getChromeDriverPath());
+			}
+		});
+		btnSaveConfiguration.setBounds(90, 190, 150, 23);
 		panel_1.add(btnSaveConfiguration);
 		
 		JButton btnNewButton = new JButton("Reset Default");
-		btnNewButton.setBounds(276, 190, 130, 23);
+		btnNewButton.setBounds(276, 190, 150, 23);
 		panel_1.add(btnNewButton);
 		
 		button_2.addMouseListener(new MouseAdapter() {
@@ -213,5 +244,9 @@ public class GUIWindow {
 				}
 			}
 		});
+	}
+	
+	public String getChromeDriverPath() {
+		return txtdriverchromedriverexe.getText();
 	}
 }
