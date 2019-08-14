@@ -3,7 +3,14 @@ package selenium;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Properties;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -11,12 +18,53 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import gui.GUIWindow;
+
 public class BaseClass {
 
 	WebDriver driver;
+	static Properties prop;
 
+	static {
+		File dir = new File(".\\driver");
+    	if (!dir.exists())
+    	{
+    		dir.mkdirs();
+    	}
+    	
+		File tmpDir = new File(System.getProperty("user.dir")+"\\configuration.ini");
+		boolean exists = tmpDir.exists();
+		if (!exists) {
+			Writer writer = null;
+			try {
+			    writer = new BufferedWriter(new OutputStreamWriter(
+			          new FileOutputStream(System.getProperty("user.dir")+"\\configuration.ini"), "utf-8"));
+			    String driverPath = System.getProperty("user.dir");
+			    driverPath = driverPath.replace("\\", "\\\\");
+			    writer.write("chromedriver="+driverPath+"\\\\driver\\\\chromedriver.exe");
+			} catch (IOException ex) {
+
+			} finally {
+			   try {writer.close();} catch (Exception ex) {
+				   
+			   }
+			}
+		}
+		prop = new Properties();
+		try (FileInputStream configuration = new FileInputStream(
+				System.getProperty("user.dir") + "/configuration.ini");) {
+			prop.load(configuration);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public Properties getProp () {
+		return prop;
+	}
+	
 	public void openChrome() {
-
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--proxy-server='direct://'");
 		options.addArguments("--proxy-bypass-list=*");
@@ -32,14 +80,9 @@ public class BaseClass {
 		options.addArguments("test-type=browser");
 		options.addArguments("disable-infobars");
 		options.setExperimentalOption("useAutomationExtension", false);
-		System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "\\driver\\chromedriver.exe");
+		System.setProperty("webdriver.chrome.driver", prop.getProperty("chromedriver"));
 		driver = new ChromeDriver(options);
 		driver.manage().window().maximize();
-	}
-
-	public static void main(String[] args) throws AWTException, InterruptedException {
-		BaseClass obj = new BaseClass();
-		obj.openChrome();
 	}
 
 	public void closeChrome() throws IOException {
