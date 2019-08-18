@@ -1,45 +1,35 @@
 package gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-
-import selenium.BaseClass;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JToggleButton;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import java.awt.Choice;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.Properties;
-
-import javax.swing.JTextArea;
-import java.awt.Color;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import java.awt.Component;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import selenium.BaseClass;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GUIWindow {
 
@@ -48,9 +38,10 @@ public class GUIWindow {
 	private JTextField txtEnterTheUrl;
 	private JTextField xpathTextField;
 	private JTextField txtdriverchromedriverexe;
-	private JTextField textField_1;
+	private JTextField txtdriverfirefoxdriverexe;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	static BaseClass obj = new BaseClass();
+	private JTextField sendKeysText;
 
 	/**
 	 * Launch the application.
@@ -85,18 +76,74 @@ public class GUIWindow {
 		frame.setBounds(100, 100, 540, 540);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		JButton button = new JButton("Open Browser");
+		JButton openBrowserBtn = new JButton("Open Browser");
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		JPanel panel = new JPanel();
-		JRadioButton radioButton = new JRadioButton("Chrome");
-		buttonGroup.add(radioButton);
-		JRadioButton radioButton_1 = new JRadioButton("Firefox");
-		buttonGroup.add(radioButton_1);
-		JButton button_1 = new JButton("Close Browser");
+		JRadioButton chromeRadioButton = new JRadioButton("Chrome");
+		buttonGroup.add(chromeRadioButton);
+		JRadioButton firefoxRadioButton = new JRadioButton("Firefox");
+		buttonGroup.add(firefoxRadioButton);
+		JButton closeBrowserBtn = new JButton("Close Browser");
 		JPanel panel_1 = new JPanel();
-		JButton button_2 = new JButton("Navigate");
-		JButton button_3 = new JButton("Open Console");
-		JComboBox<?> comboBox = new JComboBox();
+		JButton navigateBtn = new JButton("Navigate");
+		navigateBtn.setEnabled(false);
+		JButton openConsoleBtn = new JButton("Open Console");
+		JComboBox<String> httpComboBox = new JComboBox<String>();
+		JComboBox<String> actionsDropdown = new JComboBox<String>();
+		actionsDropdown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox comboBox = (JComboBox) e.getSource();
+				Object selected = comboBox.getSelectedItem();
+				if(selected.toString().equals("sendKeys()")) {
+					sendKeysText.setVisible(true);
+					sendKeysText.setEnabled(true);
+				} else {
+					sendKeysText.setVisible(false);
+					sendKeysText.setEnabled(false);
+				}
+			}
+		});
+		JButton executeBtn = new JButton("EXECUTE");
+		JLabel lblXpath = new JLabel("XPath :");
+		JButton btnNewButton_1 = new JButton("");
+		
+		executeBtn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (executeBtn.isEnabled()) {
+					String action = (String) actionsDropdown.getSelectedItem();
+					String xpath = xpathTextField.getText();
+					switch (action) {
+					case "click()":
+						obj.click(xpath);
+						break;
+					case "sendKeys()":
+						obj.sendKeys(xpath, "");
+						break;
+					case "clear()":
+						obj.clear(xpath);
+						break;
+					case "submit()":
+						obj.submit(xpath);
+						break;
+					case "getText()":
+						obj.getText(xpath);
+						break;
+					case "isDisplayed()":
+						obj.isDisplayed(xpath);
+						break;
+					case "isSelected()":
+						obj.isSelected(xpath);
+						break;
+					case "isVisible()":
+						obj.isDisplayed(xpath);
+						break;
+					}
+				}
+			}
+		});
+
+		httpComboBox.setEnabled(false);
 
 		tabbedPane.setBounds(10, 0, 514, 500);
 		frame.getContentPane().add(tabbedPane);
@@ -104,47 +151,59 @@ public class GUIWindow {
 		tabbedPane.addTab("Action", null, panel, null);
 		panel.setLayout(null);
 
-		radioButton.setSelected(true);
-		radioButton.setBounds(24, 19, 101, 23);
-		panel.add(radioButton);
+		chromeRadioButton.setSelected(true);
+		chromeRadioButton.setBounds(24, 19, 101, 23);
+		panel.add(chromeRadioButton);
 
-		radioButton_1.setBounds(157, 19, 119, 23);
-		panel.add(radioButton_1);
+		firefoxRadioButton.setBounds(157, 19, 119, 23);
+		panel.add(firefoxRadioButton);
 
-		button.addMouseListener(new MouseAdapter() {
+		openBrowserBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				obj.openChrome();
+				if (openBrowserBtn.isEnabled()) {
+					if (chromeRadioButton.isSelected()) {
+						obj.openChrome();
+					} else if (firefoxRadioButton.isSelected()) {
+						obj.openFirefox();
+					}
+					closeBrowserBtn.setEnabled(true);
+					openConsoleBtn.setEnabled(true);
+					openBrowserBtn.setEnabled(false);
+					httpComboBox.setEnabled(true);
+					txtEnterTheUrl.setEnabled(true);
+					navigateBtn.setEnabled(true);
+					xpathTextField.setEnabled(true);
+					actionsDropdown.setEnabled(true);
+					executeBtn.setEnabled(true);
+				}
 			}
 		});
-		button.setBounds(10, 60, 119, 23);
-		panel.add(button);
+		openBrowserBtn.setBounds(10, 60, 119, 23);
+		panel.add(openBrowserBtn);
 
-		button_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		button_1.setEnabled(false);
-		button_1.setBounds(273, 60, 119, 23);
-		panel.add(button_1);
+		closeBrowserBtn.setEnabled(false);
+		closeBrowserBtn.setBounds(273, 60, 119, 23);
+		panel.add(closeBrowserBtn);
 
-		button_2.setBounds(398, 98, 101, 23);
-		panel.add(button_2);
+		navigateBtn.setBounds(398, 98, 101, 23);
+		panel.add(navigateBtn);
 
-		button_3.setEnabled(false);
-		button_3.setBounds(140, 60, 119, 23);
-		panel.add(button_3);
+		openConsoleBtn.setEnabled(false);
+		openConsoleBtn.setBounds(140, 60, 119, 23);
+		panel.add(openConsoleBtn);
 
 		txtEnterTheUrl = new JTextField();
+		txtEnterTheUrl.setEnabled(false);
 		txtEnterTheUrl.setToolTipText("Enter the URL to Navigate");
 		txtEnterTheUrl.setColumns(10);
 		txtEnterTheUrl.setBounds(67, 99, 331, 20);
 		panel.add(txtEnterTheUrl);
 
-		comboBox.setModel(new DefaultComboBoxModel(new String[] { "http", "https" }));
-		comboBox.setSelectedIndex(0);
-		comboBox.setBounds(10, 99, 56, 20);
-		panel.add(comboBox);
+		httpComboBox.setModel(new DefaultComboBoxModel<String>(new String[] { "http", "https" }));
+		httpComboBox.setSelectedIndex(0);
+		httpComboBox.setBounds(10, 99, 56, 20);
+		panel.add(httpComboBox);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 230, 489, 231);
@@ -158,25 +217,24 @@ public class GUIWindow {
 		PrintStream printStream = new PrintStream(new CustomOutputStream(textArea));
 
 		xpathTextField = new JTextField();
+		xpathTextField.setEnabled(false);
 		xpathTextField.setBounds(67, 151, 331, 20);
 		panel.add(xpathTextField);
 		xpathTextField.setColumns(10);
 
-		JLabel lblXpath = new JLabel("XPath :");
 		lblXpath.setBounds(10, 154, 46, 14);
 		panel.add(lblXpath);
 
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setModel(
-				new DefaultComboBoxModel(new String[] { " click()", " sendKeys()", " clear()", " getText()" }));
-		comboBox_1.setBounds(399, 151, 101, 20);
-		panel.add(comboBox_1);
+		actionsDropdown.setEnabled(false);
+		actionsDropdown.setModel(new DefaultComboBoxModel<String>(new String[] { "click()", "sendKeys()", "clear()",
+				"submit()", "getText()", "isDisplayed()", "isSelected()", "isVisible()" }));
+		actionsDropdown.setBounds(399, 151, 101, 20);
+		panel.add(actionsDropdown);
 
-		JButton btnExecute = new JButton("EXECUTE");
-		btnExecute.setBounds(208, 182, 89, 23);
-		panel.add(btnExecute);
+		executeBtn.setEnabled(false);
+		executeBtn.setBounds(208, 182, 89, 23);
+		panel.add(executeBtn);
 
-		JButton btnNewButton_1 = new JButton("");
 		btnNewButton_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -196,15 +254,21 @@ public class GUIWindow {
 					StringSelection stringSelection = new StringSelection(textAreaText);
 					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 					clipboard.setContents(stringSelection, null);
-				} else{
-					JOptionPane.showMessageDialog(null, "Console is empty",
-							"Copy", JOptionPane.ERROR_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Console is empty", "Copy", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 		btnCopyConsoleText.setToolTipText("Copy console text");
 		btnCopyConsoleText.setBounds(470, 215, 15, 15);
 		panel.add(btnCopyConsoleText);
+		
+		sendKeysText = new JTextField();
+		sendKeysText.setEnabled(false);
+		sendKeysText.setBounds(67, 184, 131, 20);
+		sendKeysText.setVisible(false);
+		panel.add(sendKeysText);
+		sendKeysText.setColumns(10);
 		System.setOut(printStream);
 		System.setErr(printStream);
 
@@ -225,20 +289,30 @@ public class GUIWindow {
 		lblFirefoxDriverExecutable.setBounds(10, 109, 195, 14);
 		panel_1.add(lblFirefoxDriverExecutable);
 
-		textField_1 = new JTextField();
-		textField_1.setBounds(10, 134, 489, 20);
-		panel_1.add(textField_1);
-		textField_1.setColumns(10);
+		txtdriverfirefoxdriverexe = new JTextField();
+		txtdriverfirefoxdriverexe.setText(prop.getProperty("firefoxdriver"));
+		txtdriverfirefoxdriverexe.setBounds(10, 134, 489, 20);
+		panel_1.add(txtdriverfirefoxdriverexe);
+		txtdriverfirefoxdriverexe.setColumns(10);
 
 		JButton btnSaveConfiguration = new JButton("Save Configuration");
 		btnSaveConfiguration.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try (OutputStream output = new FileOutputStream(System.getProperty("user.dir")+"\\configuration.ini");) {
-					prop.setProperty("chromedriver", txtdriverchromedriverexe.getText());
-					prop.store(output, null);
-					JOptionPane.showMessageDialog(null, "Save was Successful", "Configuration" + " setting",
-							JOptionPane.INFORMATION_MESSAGE);
+				try (OutputStream output = new FileOutputStream(
+						System.getProperty("user.dir") + "\\configuration.ini");) {
+					if (txtdriverchromedriverexe.getText().contains(".exe")
+							&& txtdriverfirefoxdriverexe.getText().contains(".exe")) {
+						prop.setProperty("chromedriver", txtdriverchromedriverexe.getText());
+						prop.setProperty("firefoxdriver", txtdriverfirefoxdriverexe.getText());
+						prop.store(output, null);
+						JOptionPane.showMessageDialog(null, "Save was Successful", "Configuration" + " setting",
+								JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"Does the Path contains .exe executable. \nPlease point to .exe file or try Reset Default",
+								"Configuration" + " setting", JOptionPane.QUESTION_MESSAGE);
+					}
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, "Save was Unsuccessful : \n" + ex.getMessage(),
 							"Configuration" + " setting", JOptionPane.INFORMATION_MESSAGE);
@@ -253,9 +327,12 @@ public class GUIWindow {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String driverPath = System.getProperty("user.dir");
-				txtdriverchromedriverexe.setText(driverPath+"\\driver\\chromedriver.exe");
-				try (OutputStream output = new FileOutputStream(System.getProperty("user.dir")+"\\configuration.ini");) {
-					prop.setProperty("chromedriver", driverPath+"\\driver\\chromedriver.exe");
+				txtdriverchromedriverexe.setText(driverPath + "\\driver\\chromedriver.exe");
+				txtdriverfirefoxdriverexe.setText(driverPath + "\\driver\\geckodriver.exe");
+				try (OutputStream output = new FileOutputStream(
+						System.getProperty("user.dir") + "\\configuration.ini");) {
+					prop.setProperty("chromedriver", driverPath + "\\driver\\chromedriver.exe");
+					prop.setProperty("firefoxdriver", driverPath + "\\driver\\geckodriver.exe");
 					prop.store(output, null);
 					JOptionPane.showMessageDialog(null, "Reset was Successful", "Configuration" + " setting",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -263,26 +340,41 @@ public class GUIWindow {
 					JOptionPane.showMessageDialog(null, "Reset was Unsuccessful : \n" + ex.getMessage(),
 							"Configuration" + " setting", JOptionPane.INFORMATION_MESSAGE);
 				}
-			
+
 			}
 		});
 		btnNewButton.setBounds(276, 190, 150, 23);
 		panel_1.add(btnNewButton);
 
-		button_2.addMouseListener(new MouseAdapter() {
+		navigateBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				obj.navigateToUrl(txtEnterTheUrl.getText());
+				if (navigateBtn.isEnabled()) {
+					obj.navigateToUrl(txtEnterTheUrl.getText(), "http");
+				}
 			}
 		});
 
-		button_1.addMouseListener(new MouseAdapter() {
+		closeBrowserBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					obj.closeChrome();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				if (closeBrowserBtn.isEnabled()) {
+					try {
+						obj.closeChrome();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					closeBrowserBtn.setEnabled(false);
+					openConsoleBtn.setEnabled(false);
+					openBrowserBtn.setEnabled(true);
+					httpComboBox.setEnabled(false);
+					txtEnterTheUrl.setEnabled(false);
+					navigateBtn.setEnabled(false);
+					xpathTextField.setEnabled(false);
+					actionsDropdown.setEnabled(false);
+					executeBtn.setEnabled(false);
+					sendKeysText.setVisible(false);
+					sendKeysText.setEnabled(false);
 				}
 			}
 		});
