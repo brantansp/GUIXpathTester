@@ -94,6 +94,28 @@ public class BaseClass {
 		System.setProperty("webdriver.gecko.driver", prop.getProperty("firefoxdriver"));
 		driver = new FirefoxDriver(options);
 		driver.manage().window().maximize();
+		
+		driver.close();
+		driver.get("");
+		driver.getCurrentUrl();
+		driver.getPageSource();
+		driver.getTitle();
+		driver.getWindowHandle();
+		driver.getWindowHandles();
+		driver.quit();
+		driver.switchTo();
+		
+		driver.navigate().back();
+		driver.navigate().forward();
+		driver.navigate().refresh();
+		driver.navigate().to("");
+		
+		driver.manage().window().fullscreen();
+		driver.manage().window().getPosition();
+		driver.manage().window().getSize();
+		driver.manage().window().maximize();
+		
+		
 	}
 
 	public void closeChrome() throws IOException {

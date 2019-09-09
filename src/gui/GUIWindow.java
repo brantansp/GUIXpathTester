@@ -73,7 +73,7 @@ public class GUIWindow {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 540, 540);
+		frame.setBounds(100, 100, 640, 640);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		JButton openBrowserBtn = new JButton("Open Browser");
@@ -86,10 +86,15 @@ public class GUIWindow {
 		JButton closeBrowserBtn = new JButton("Close Browser");
 		JPanel panel_1 = new JPanel();
 		JButton navigateBtn = new JButton("Navigate");
+		navigateBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		navigateBtn.setEnabled(false);
 		JButton openConsoleBtn = new JButton("Open Console");
 		JComboBox<String> httpComboBox = new JComboBox<String>();
 		JComboBox<String> actionsDropdown = new JComboBox<String>();
+		JComboBox<String> jsActionDropdown = new JComboBox<String>();
 		actionsDropdown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox comboBox = (JComboBox) e.getSource();
@@ -145,7 +150,7 @@ public class GUIWindow {
 
 		httpComboBox.setEnabled(false);
 
-		tabbedPane.setBounds(10, 0, 514, 500);
+		tabbedPane.setBounds(10, 0, 614, 600);
 		frame.getContentPane().add(tabbedPane);
 
 		tabbedPane.addTab("Action", null, panel, null);
@@ -176,6 +181,7 @@ public class GUIWindow {
 					xpathTextField.setEnabled(true);
 					actionsDropdown.setEnabled(true);
 					executeBtn.setEnabled(true);
+					jsActionDropdown.setEnabled(true);
 				}
 			}
 		});
@@ -186,7 +192,7 @@ public class GUIWindow {
 		closeBrowserBtn.setBounds(273, 60, 119, 23);
 		panel.add(closeBrowserBtn);
 
-		navigateBtn.setBounds(398, 98, 101, 23);
+		navigateBtn.setBounds(398, 206, 101, 23);
 		panel.add(navigateBtn);
 
 		openConsoleBtn.setEnabled(false);
@@ -197,16 +203,16 @@ public class GUIWindow {
 		txtEnterTheUrl.setEnabled(false);
 		txtEnterTheUrl.setToolTipText("Enter the URL to Navigate");
 		txtEnterTheUrl.setColumns(10);
-		txtEnterTheUrl.setBounds(67, 99, 331, 20);
+		txtEnterTheUrl.setBounds(67, 207, 331, 20);
 		panel.add(txtEnterTheUrl);
 
 		httpComboBox.setModel(new DefaultComboBoxModel<String>(new String[] { "http", "https" }));
 		httpComboBox.setSelectedIndex(0);
-		httpComboBox.setBounds(10, 99, 56, 20);
+		httpComboBox.setBounds(10, 207, 56, 20);
 		panel.add(httpComboBox);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 230, 489, 231);
+		scrollPane.setBounds(10, 333, 589, 228);
 		panel.add(scrollPane);
 
 		JTextArea textArea = new JTextArea();
@@ -218,21 +224,21 @@ public class GUIWindow {
 
 		xpathTextField = new JTextField();
 		xpathTextField.setEnabled(false);
-		xpathTextField.setBounds(67, 151, 331, 20);
+		xpathTextField.setBounds(67, 235, 331, 20);
 		panel.add(xpathTextField);
 		xpathTextField.setColumns(10);
 
-		lblXpath.setBounds(10, 154, 46, 14);
+		lblXpath.setBounds(10, 238, 46, 14);
 		panel.add(lblXpath);
 
 		actionsDropdown.setEnabled(false);
 		actionsDropdown.setModel(new DefaultComboBoxModel<String>(new String[] { "click()", "sendKeys()", "clear()",
 				"submit()", "getText()", "isDisplayed()", "isSelected()", "isVisible()" }));
-		actionsDropdown.setBounds(399, 151, 101, 20);
+		actionsDropdown.setBounds(399, 235, 101, 20);
 		panel.add(actionsDropdown);
 
 		executeBtn.setEnabled(false);
-		executeBtn.setBounds(208, 182, 89, 23);
+		executeBtn.setBounds(208, 290, 89, 23);
 		panel.add(executeBtn);
 
 		btnNewButton_1.addMouseListener(new MouseAdapter() {
@@ -242,7 +248,7 @@ public class GUIWindow {
 			}
 		});
 		btnNewButton_1.setToolTipText("Clear Console");
-		btnNewButton_1.setBounds(484, 215, 15, 15);
+		btnNewButton_1.setBounds(582, 313, 15, 15);
 		panel.add(btnNewButton_1);
 
 		JButton btnCopyConsoleText = new JButton("");
@@ -260,15 +266,20 @@ public class GUIWindow {
 			}
 		});
 		btnCopyConsoleText.setToolTipText("Copy console text");
-		btnCopyConsoleText.setBounds(470, 215, 15, 15);
+		btnCopyConsoleText.setBounds(568, 313, 15, 15);
 		panel.add(btnCopyConsoleText);
 		
 		sendKeysText = new JTextField();
 		sendKeysText.setEnabled(false);
-		sendKeysText.setBounds(67, 184, 131, 20);
+		sendKeysText.setBounds(67, 267, 131, 20);
 		sendKeysText.setVisible(false);
 		panel.add(sendKeysText);
 		sendKeysText.setColumns(10);
+		
+		jsActionDropdown.setModel(new DefaultComboBoxModel(new String[] {"click()", "clear()", "enterInnerHTML()", "enterValue()", "focus()", "getAttribute()", "getTagName()", "getText()", "isSelected()", "scrollUntilElement()"}));
+		jsActionDropdown.setEnabled(false);
+		jsActionDropdown.setBounds(398, 267, 101, 20);
+		panel.add(jsActionDropdown);
 		System.setOut(printStream);
 		System.setErr(printStream);
 
@@ -363,18 +374,20 @@ public class GUIWindow {
 						obj.closeChrome();
 					} catch (IOException e1) {
 						e1.printStackTrace();
+					} finally {
+						closeBrowserBtn.setEnabled(false);
+						openConsoleBtn.setEnabled(false);
+						openBrowserBtn.setEnabled(true);
+						httpComboBox.setEnabled(false);
+						txtEnterTheUrl.setEnabled(false);
+						navigateBtn.setEnabled(false);
+						xpathTextField.setEnabled(false);
+						actionsDropdown.setEnabled(false);
+						executeBtn.setEnabled(false);
+						sendKeysText.setVisible(false);
+						sendKeysText.setEnabled(false);
 					}
-					closeBrowserBtn.setEnabled(false);
-					openConsoleBtn.setEnabled(false);
-					openBrowserBtn.setEnabled(true);
-					httpComboBox.setEnabled(false);
-					txtEnterTheUrl.setEnabled(false);
-					navigateBtn.setEnabled(false);
-					xpathTextField.setEnabled(false);
-					actionsDropdown.setEnabled(false);
-					executeBtn.setEnabled(false);
-					sendKeysText.setVisible(false);
-					sendKeysText.setEnabled(false);
+					
 				}
 			}
 		});
