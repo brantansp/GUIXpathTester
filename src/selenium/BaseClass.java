@@ -139,9 +139,6 @@ public class BaseClass {
 			url = http + "://" + url;
 		}
 
-		if (!(url.contains(".com"))) {
-			url = url + ".com";
-		}
 		System.out.println("Navigated to URL : " + url);
 		driver.navigate().to(url);
 	}
