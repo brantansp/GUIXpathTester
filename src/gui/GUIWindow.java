@@ -118,12 +118,13 @@ public class GUIWindow {
 				if (executeBtn.isEnabled()) {
 					String action = (String) actionsDropdown.getSelectedItem();
 					String xpath = xpathTextField.getText();
+					String text = sendKeysText.getText();
 					switch (action) {
 					case "click()":
 						obj.click(xpath);
 						break;
 					case "sendKeys()":
-						obj.sendKeys(xpath, "");
+						obj.sendKeys(xpath, text);
 						break;
 					case "clear()":
 						obj.clear(xpath);
