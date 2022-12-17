@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
@@ -21,14 +22,16 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
 import gui.GUIWindow;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BaseClass {
 
 	WebDriver driver;
 	static Properties prop;
-
+	static String downloadFilepath = System.getProperty("user.dir") + File.separator + "download";
+	
 	static {
-		File dir = new File(".\\driver");
+		File dir = new File(".\\download");
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
@@ -68,6 +71,7 @@ public class BaseClass {
 	}
 
 	public void openChrome() {
+		WebDriverManager.chromedriver().setup();
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--proxy-server='direct://'");
 		options.addArguments("--proxy-bypass-list=*");
@@ -82,13 +86,28 @@ public class BaseClass {
 		options.addArguments("--window-size=1920,1080");
 		options.addArguments("test-type=browser");
 		options.addArguments("disable-infobars");
+		options.addArguments("--no-sandbox");
+		options.addArguments("--disable-dev-shm-usage");
 		options.setExperimentalOption("useAutomationExtension", false);
-		System.setProperty("webdriver.chrome.driver", prop.getProperty("chromedriver"));
+		options.setProxy(null);
+		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
+		chromePrefs.put("profile.default_content_settings.popups", 0);
+		chromePrefs.put("download.default_directory", downloadFilepath);
+		chromePrefs.put("download.prompt_for_download", false);
+		chromePrefs.put("download.directory_upgrade", true);
+		chromePrefs.put("plugins.plugins_disabled", "Chrome PDF Viewer");
+		chromePrefs.put("plugins.always_open_pdf_externally", true);
+		chromePrefs.put("pdfjs.disabled", true);
+		chromePrefs.put("profile.default_content_setting_values.notifications", 2);
+		
+		options.setExperimentalOption("prefs", chromePrefs);
+		//System.setProperty("webdriver.chrome.driver", prop.getProperty("chromedriver"));		
 		driver = new ChromeDriver(options);
 		driver.manage().window().maximize();
 	}
 
 	public void openFirefox() {
+		WebDriverManager.firefoxdriver().setup();
 		FirefoxOptions options = new FirefoxOptions();
 		options.setCapability("marionette", false);
 		System.setProperty("webdriver.gecko.driver", prop.getProperty("firefoxdriver"));
@@ -166,6 +185,7 @@ public class BaseClass {
 			driver.findElement(By.xpath(xpath)).sendKeys(text);
 			System.out.println("Text : " + text + " send to the element : " + xpath);
 		} catch (Exception e) {
+			System.out.println("Text : " + text + " send to the element : " + xpath);
 			e.printStackTrace();
 		}
 	}
