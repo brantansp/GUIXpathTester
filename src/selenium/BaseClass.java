@@ -11,11 +11,13 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -174,6 +176,18 @@ public class BaseClass {
 	public void click(String xpath) {
 		try {
 			driver.findElement(By.xpath(xpath)).click();
+			System.out.println("The element was Clicked for : " + xpath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void clickAll(String xpath) {
+		try {
+			List <WebElement> wb =driver.findElements(By.xpath(xpath));
+			for (WebElement w : wb) {
+				w.click();
+			}
 			System.out.println("The element was Clicked for : " + xpath);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -123,6 +123,9 @@ public class GUIWindow {
 					case "click()":
 						obj.click(xpath);
 						break;
+					case "clickAll()":
+						obj.clickAll(xpath);
+						break;
 					case "sendKeys()":
 						obj.sendKeys(xpath, text);
 						break;
@@ -233,7 +236,7 @@ public class GUIWindow {
 		panel.add(lblXpath);
 
 		actionsDropdown.setEnabled(false);
-		actionsDropdown.setModel(new DefaultComboBoxModel<String>(new String[] { "click()", "sendKeys()", "clear()",
+		actionsDropdown.setModel(new DefaultComboBoxModel<String>(new String[] { "click()", "clickAll()", "sendKeys()", "clear()",
 				"submit()", "getText()", "isDisplayed()", "isSelected()", "isVisible()" }));
 		actionsDropdown.setBounds(399, 235, 101, 20);
 		panel.add(actionsDropdown);
@@ -277,7 +280,7 @@ public class GUIWindow {
 		panel.add(sendKeysText);
 		sendKeysText.setColumns(10);
 		
-		jsActionDropdown.setModel(new DefaultComboBoxModel(new String[] {"click()", "clear()", "enterInnerHTML()", "enterValue()", "focus()", "getAttribute()", "getTagName()", "getText()", "isSelected()", "scrollUntilElement()"}));
+		jsActionDropdown.setModel(new DefaultComboBoxModel(new String[] {"click()", "clickAll()", "clear()", "enterInnerHTML()", "enterValue()", "focus()", "getAttribute()", "getTagName()", "getText()", "isSelected()", "scrollUntilElement()"}));
 		jsActionDropdown.setEnabled(false);
 		jsActionDropdown.setBounds(398, 267, 101, 20);
 		panel.add(jsActionDropdown);
